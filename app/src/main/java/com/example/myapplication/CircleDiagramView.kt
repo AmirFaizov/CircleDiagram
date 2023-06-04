@@ -27,6 +27,14 @@ class CircleDiagramView(context: Context) : View(context) {
         paint.style = Paint.Style.FILL
         return paint
     }
+    private fun createStrokePaint(): Paint{
+        val paint = Paint()
+        paint.color = Color.WHITE
+        paint.isAntiAlias = true
+        paint.strokeWidth = 4f
+        paint.style = Paint.Style.STROKE
+        return paint
+    }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
@@ -38,11 +46,18 @@ class CircleDiagramView(context: Context) : View(context) {
         var startAngle = -180f
 
         for (i in angleOffsets.indices) {
-            canvas?.drawArc(centerX - radius, centerY - radius, centerX + radius,
+            canvas?.drawArc(
+                centerX - radius, centerY - radius, centerX + radius,
                 centerY + radius, startAngle, angleOffsets[i], true, paints[i])
             val percent = "${data[i].second.toInt()}%"
             val textX = centerX + (radius / 2f) * Math.cos(Math.toRadians((startAngle + angleOffsets[i] / 2f).toDouble())).toFloat()
             val textY = centerY + (radius / 2f) * Math.sin(Math.toRadians((startAngle + angleOffsets[i] / 2f).toDouble())).toFloat()
+            val endX =
+                centerX + radius * Math.cos(Math.toRadians((startAngle + angleOffsets[i]).toDouble())).toFloat()
+            val endY =
+                centerY + radius * Math.sin(Math.toRadians((startAngle + angleOffsets[i]).toDouble())).toFloat()
+
+            canvas?.drawLine(centerX, centerY, endX, endY, createStrokePaint())
             canvas?.drawText(percent, textX, textY, createPaint(Color.WHITE))
             startAngle += angleOffsets[i]
         }
